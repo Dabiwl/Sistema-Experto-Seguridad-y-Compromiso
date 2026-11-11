@@ -1,0 +1,662 @@
+{
+  "sistema": "Sistema experto para la identificación y diagnóstico de riesgos de seguridad en sistemas informáticos",
+  "arbol_referencia": "fig_arbol_completo.png — 29 preguntas (N-01 a N-29) y 29 fallas (F-01 a F-29)",
+  "sgbd": "MySQL 8.0 (script: sistema_experto_seguridad.sql, base se_seguridad)",
+  "leyenda": {
+    "questions": "qN corresponde al nodo N-N del árbol (ver mapa 'nodos')",
+    "hechos": "qN = respuesta SÍ · qN_no = respuesta NO · q1_A/q1_B/q1_C = opción del nodo raíz",
+    "if_all": "Todas las condiciones deben cumplirse (AND)",
+    "if_any": "Al menos una condición debe cumplirse (OR); un elemento puede ser {\"if_all\": [...]} para agrupar condiciones con AND dentro del OR",
+    "then": "Código de la falla (hipótesis confirmada) según el árbol",
+    "prioridad": "Evaluar las reglas en orden; exactamente una se cumple por caso"
+  },
+  "nodos": {
+    "q1": "N-01",
+    "q2": "N-02",
+    "q3": "N-03",
+    "q4": "N-04",
+    "q5": "N-05",
+    "q6": "N-06",
+    "q7": "N-07",
+    "q8": "N-08",
+    "q9": "N-09",
+    "q10": "N-10",
+    "q11": "N-11",
+    "q12": "N-12",
+    "q13": "N-13",
+    "q14": "N-14",
+    "q15": "N-15",
+    "q16": "N-16",
+    "q17": "N-17",
+    "q18": "N-18",
+    "q19": "N-19",
+    "q20": "N-20",
+    "q21": "N-21",
+    "q22": "N-22",
+    "q23": "N-23",
+    "q24": "N-24",
+    "q25": "N-25",
+    "q26": "N-26",
+    "q27": "N-27",
+    "q28": "N-28",
+    "q29": "N-29"
+  },
+  "questions": {
+    "q1": "¿Cuál es el síntoma principal que reporta el usuario o el sistema de monitoreo?",
+    "q2": "¿El servicio está caído para la totalidad de los usuarios?",
+    "q3": "¿El servidor responde a la prueba ping?",
+    "q4": "¿El equipo enciende (luces y ventiladores) y recibe energía eléctrica?",
+    "q5": "¿El autodiagnóstico de hardware (POST/SMART) del disco y la memoria es correcto?",
+    "q6": "¿El consumo de CPU o de memoria supera el 90 %?",
+    "q7": "¿Se detectan procesos desconocidos con nombres aleatorios en ejecución?",
+    "q8": "¿El consumo coincide con un pico anómalo de tráfico de red simultáneo?",
+    "q9": "¿Hubo un cambio reciente de configuración, parcheo o despliegue en el servidor?",
+    "q10": "¿Los usuarios afectados comparten la misma subred o ubicación física?",
+    "q11": "¿El problema ocurre solo en conexiones inalámbricas (Wi-Fi)?",
+    "q12": "¿Existen redes con nombre similar al corporativo disponibles cerca?",
+    "q13": "¿El switch o punto de acceso de la zona reporta errores o puertos caídos?",
+    "q14": "¿Hubo un cambio reciente en la configuración de red (VLAN, DHCP o firmware)?",
+    "q15": "¿La resolución de nombres (DNS) devuelve direcciones incorrectas?",
+    "q16": "¿El sitio o servicio muestra errores de certificado SSL/TLS?",
+    "q17": "¿Los archivos aparecen cifrados o con extensiones desconocidas?",
+    "q18": "¿Se encontraron notas de extorsión o archivos de rescate en los equipos?",
+    "q19": "¿Los archivos fueron eliminados o movidos sin autorización del propietario?",
+    "q20": "¿Las acciones provienen de una cuenta interna válida con permisos sobre los archivos?",
+    "q21": "¿Las aplicaciones muestran datos inconsistentes o registros perdidos?",
+    "q22": "¿Los registros de la base de datos muestran consultas SQL anómalas o masivas?",
+    "q23": "¿La inconsistencia aparece solo entre réplicas o respaldos del mismo servidor?",
+    "q24": "¿Las cuentas están bloqueadas o se registran intentos de acceso fallidos masivos?",
+    "q25": "¿Los intentos fallidos provienen de muchas direcciones IP distintas?",
+    "q26": "¿El bloqueo ocurre en horario no laboral o sin actividad del usuario legítimo?",
+    "q27": "¿Se detectaron inicios de sesión desde ubicaciones, horarios o dispositivos inusuales?",
+    "q28": "¿La sesión anómala utiliza privilegios administrativos?",
+    "q29": "¿Se crearon cuentas nuevas o se modificaron permisos sin autorización?"
+  },
+  "hechos": {
+    "q1_A": "El síntoma principal es A. Interrupción total o degradación severa del servicio",
+    "q1_B": "El síntoma principal es B. Archivos cifrados, alterados o inaccesibles",
+    "q1_C": "El síntoma principal es C. Comportamiento anómalo de cuentas o accesos",
+    "q2": "Respuesta SÍ a: ¿El servicio está caído para la totalidad de los usuarios?",
+    "q2_no": "Respuesta NO a: ¿El servicio está caído para la totalidad de los usuarios?",
+    "q3": "Respuesta SÍ a: ¿El servidor responde a la prueba ping?",
+    "q3_no": "Respuesta NO a: ¿El servidor responde a la prueba ping?",
+    "q4": "Respuesta SÍ a: ¿El equipo enciende (luces y ventiladores) y recibe energía eléctrica?",
+    "q4_no": "Respuesta NO a: ¿El equipo enciende (luces y ventiladores) y recibe energía eléctrica?",
+    "q5": "Respuesta SÍ a: ¿El autodiagnóstico de hardware (POST/SMART) del disco y la memoria es correcto?",
+    "q5_no": "Respuesta NO a: ¿El autodiagnóstico de hardware (POST/SMART) del disco y la memoria es correcto?",
+    "q6": "Respuesta SÍ a: ¿El consumo de CPU o de memoria supera el 90 %?",
+    "q6_no": "Respuesta NO a: ¿El consumo de CPU o de memoria supera el 90 %?",
+    "q7": "Respuesta SÍ a: ¿Se detectan procesos desconocidos con nombres aleatorios en ejecución?",
+    "q7_no": "Respuesta NO a: ¿Se detectan procesos desconocidos con nombres aleatorios en ejecución?",
+    "q8": "Respuesta SÍ a: ¿El consumo coincide con un pico anómalo de tráfico de red simultáneo?",
+    "q8_no": "Respuesta NO a: ¿El consumo coincide con un pico anómalo de tráfico de red simultáneo?",
+    "q9": "Respuesta SÍ a: ¿Hubo un cambio reciente de configuración, parcheo o despliegue en el servidor?",
+    "q9_no": "Respuesta NO a: ¿Hubo un cambio reciente de configuración, parcheo o despliegue en el servidor?",
+    "q10": "Respuesta SÍ a: ¿Los usuarios afectados comparten la misma subred o ubicación física?",
+    "q10_no": "Respuesta NO a: ¿Los usuarios afectados comparten la misma subred o ubicación física?",
+    "q11": "Respuesta SÍ a: ¿El problema ocurre solo en conexiones inalámbricas (Wi-Fi)?",
+    "q11_no": "Respuesta NO a: ¿El problema ocurre solo en conexiones inalámbricas (Wi-Fi)?",
+    "q12": "Respuesta SÍ a: ¿Existen redes con nombre similar al corporativo disponibles cerca?",
+    "q12_no": "Respuesta NO a: ¿Existen redes con nombre similar al corporativo disponibles cerca?",
+    "q13": "Respuesta SÍ a: ¿El switch o punto de acceso de la zona reporta errores o puertos caídos?",
+    "q13_no": "Respuesta NO a: ¿El switch o punto de acceso de la zona reporta errores o puertos caídos?",
+    "q14": "Respuesta SÍ a: ¿Hubo un cambio reciente en la configuración de red (VLAN, DHCP o firmware)?",
+    "q14_no": "Respuesta NO a: ¿Hubo un cambio reciente en la configuración de red (VLAN, DHCP o firmware)?",
+    "q15": "Respuesta SÍ a: ¿La resolución de nombres (DNS) devuelve direcciones incorrectas?",
+    "q15_no": "Respuesta NO a: ¿La resolución de nombres (DNS) devuelve direcciones incorrectas?",
+    "q16": "Respuesta SÍ a: ¿El sitio o servicio muestra errores de certificado SSL/TLS?",
+    "q16_no": "Respuesta NO a: ¿El sitio o servicio muestra errores de certificado SSL/TLS?",
+    "q17": "Respuesta SÍ a: ¿Los archivos aparecen cifrados o con extensiones desconocidas?",
+    "q17_no": "Respuesta NO a: ¿Los archivos aparecen cifrados o con extensiones desconocidas?",
+    "q18": "Respuesta SÍ a: ¿Se encontraron notas de extorsión o archivos de rescate en los equipos?",
+    "q18_no": "Respuesta NO a: ¿Se encontraron notas de extorsión o archivos de rescate en los equipos?",
+    "q19": "Respuesta SÍ a: ¿Los archivos fueron eliminados o movidos sin autorización del propietario?",
+    "q19_no": "Respuesta NO a: ¿Los archivos fueron eliminados o movidos sin autorización del propietario?",
+    "q20": "Respuesta SÍ a: ¿Las acciones provienen de una cuenta interna válida con permisos sobre los archivos?",
+    "q20_no": "Respuesta NO a: ¿Las acciones provienen de una cuenta interna válida con permisos sobre los archivos?",
+    "q21": "Respuesta SÍ a: ¿Las aplicaciones muestran datos inconsistentes o registros perdidos?",
+    "q21_no": "Respuesta NO a: ¿Las aplicaciones muestran datos inconsistentes o registros perdidos?",
+    "q22": "Respuesta SÍ a: ¿Los registros de la base de datos muestran consultas SQL anómalas o masivas?",
+    "q22_no": "Respuesta NO a: ¿Los registros de la base de datos muestran consultas SQL anómalas o masivas?",
+    "q23": "Respuesta SÍ a: ¿La inconsistencia aparece solo entre réplicas o respaldos del mismo servidor?",
+    "q23_no": "Respuesta NO a: ¿La inconsistencia aparece solo entre réplicas o respaldos del mismo servidor?",
+    "q24": "Respuesta SÍ a: ¿Las cuentas están bloqueadas o se registran intentos de acceso fallidos masivos?",
+    "q24_no": "Respuesta NO a: ¿Las cuentas están bloqueadas o se registran intentos de acceso fallidos masivos?",
+    "q25": "Respuesta SÍ a: ¿Los intentos fallidos provienen de muchas direcciones IP distintas?",
+    "q25_no": "Respuesta NO a: ¿Los intentos fallidos provienen de muchas direcciones IP distintas?",
+    "q26": "Respuesta SÍ a: ¿El bloqueo ocurre en horario no laboral o sin actividad del usuario legítimo?",
+    "q26_no": "Respuesta NO a: ¿El bloqueo ocurre en horario no laboral o sin actividad del usuario legítimo?",
+    "q27": "Respuesta SÍ a: ¿Se detectaron inicios de sesión desde ubicaciones, horarios o dispositivos inusuales?",
+    "q27_no": "Respuesta NO a: ¿Se detectaron inicios de sesión desde ubicaciones, horarios o dispositivos inusuales?",
+    "q28": "Respuesta SÍ a: ¿La sesión anómala utiliza privilegios administrativos?",
+    "q28_no": "Respuesta NO a: ¿La sesión anómala utiliza privilegios administrativos?",
+    "q29": "Respuesta SÍ a: ¿Se crearon cuentas nuevas o se modificaron permisos sin autorización?",
+    "q29_no": "Respuesta NO a: ¿Se crearon cuentas nuevas o se modificaron permisos sin autorización?"
+  },
+  "fallas": {
+    "F-01": {
+      "nombre": "Falla eléctrica o de fuente de poder",
+      "categoria": "Operativa",
+      "recomendacion": "Restablecer la energía, revisar UPS y fuente de poder y verificar el circuito eléctrico."
+    },
+    "F-02": {
+      "nombre": "Falla de hardware (disco o memoria dañados)",
+      "categoria": "Operativa",
+      "recomendacion": "Reemplazar el disco o módulo de memoria dañado y restaurar desde respaldo."
+    },
+    "F-03": {
+      "nombre": "Caída del sistema operativo",
+      "categoria": "Operativa",
+      "recomendacion": "Iniciar en modo seguro, revertir la última actualización y aplicar parches oficiales."
+    },
+    "F-04": {
+      "nombre": "Criptominero o malware que consume recursos",
+      "categoria": "Seguridad",
+      "recomendacion": "Aislar el equipo, eliminar el proceso malicioso y desplegar antivirus/EDR actualizado."
+    },
+    "F-05": {
+      "nombre": "Ataque de denegación de servicio (DoS/DDoS)",
+      "categoria": "Seguridad",
+      "recomendacion": "Activar mitigación DDoS, filtrar tráfico en el perímetro y escalar al proveedor."
+    },
+    "F-06": {
+      "nombre": "Fuga de memoria o mala configuración de la aplicación",
+      "categoria": "Operativa",
+      "recomendacion": "Identificar el proceso con fuga, aplicar parche de la aplicación y ajustar límites de memoria."
+    },
+    "F-07": {
+      "nombre": "Configuración incorrecta tras un cambio no controlado",
+      "categoria": "Operativa",
+      "recomendacion": "Revertir el cambio no controlado, restaurar la línea base aprobada y activar gestión de cambios."
+    },
+    "F-08": {
+      "nombre": "Agotamiento del pool de conexiones de la base de datos",
+      "categoria": "Operativa",
+      "recomendacion": "Reiniciar el servicio, aumentar el pool de conexiones y optimizar las consultas."
+    },
+    "F-09": {
+      "nombre": "Punto de acceso rogue / ataque Evil Twin",
+      "categoria": "Seguridad",
+      "recomendacion": "Localizar y desactivar el punto de acceso no autorizado y rotar las credenciales Wi-Fi."
+    },
+    "F-10": {
+      "nombre": "Saturación o interferencia del canal Wi-Fi",
+      "categoria": "Operativa",
+      "recomendacion": "Reasignar canales y potencia de transmisión y analizar fuentes de interferencia."
+    },
+    "F-11": {
+      "nombre": "Falla de hardware de red (switch, AP o puerto)",
+      "categoria": "Operativa",
+      "recomendacion": "Reemplazar el equipo o puerto dañado y redistribuir la carga en la topología."
+    },
+    "F-12": {
+      "nombre": "Error de configuración de VLAN o DHCP",
+      "categoria": "Operativa",
+      "recomendacion": "Corregir la configuración de VLAN/DHCP contra la línea base y validar la conectividad."
+    },
+    "F-13": {
+      "nombre": "Envenenamiento de DNS (spoofing/poisoning)",
+      "categoria": "Seguridad",
+      "recomendacion": "Purgar la caché DNS, forzar DNSSEC y auditar el servidor DNS comprometido."
+    },
+    "F-14": {
+      "nombre": "Ataque de intermediario (Man-in-the-Middle)",
+      "categoria": "Seguridad",
+      "recomendacion": "Rotar certificados, verificar el gateway de salida y buscar equipos intermediarios."
+    },
+    "F-15": {
+      "nombre": "Caída del enlace o del proveedor de Internet",
+      "categoria": "Operativa",
+      "recomendacion": "Validar el enlace con el proveedor, activar el enlace de respaldo y monitorear."
+    },
+    "F-16": {
+      "nombre": "Ataque de ransomware",
+      "categoria": "Seguridad",
+      "recomendacion": "Aislar equipos, no pagar el rescate, restaurar desde respaldos verificados y segmentar la red."
+    },
+    "F-17": {
+      "nombre": "Malware de cifrado sin nota de rescate (wiper)",
+      "categoria": "Seguridad",
+      "recomendacion": "Contener el equipo, identificar y eliminar la muestra y restaurar desde respaldo."
+    },
+    "F-18": {
+      "nombre": "Amenaza interna (insider) con uso indebido de privilegios",
+      "categoria": "Seguridad",
+      "recomendacion": "Suspender la cuenta, revisar registros, aplicar mínimo privilegio y medidas disciplinarias."
+    },
+    "F-19": {
+      "nombre": "Borrado remoto por atacante (acceso no autorizado)",
+      "categoria": "Seguridad",
+      "recomendacion": "Bloquear IP y credenciales usadas, cerrar la vía de entrada y restaurar los archivos."
+    },
+    "F-20": {
+      "nombre": "Inyección SQL con manipulación de datos",
+      "categoria": "Seguridad",
+      "recomendacion": "Sanear la base de datos, usar consultas parametrizadas y corregir el código vulnerable."
+    },
+    "F-21": {
+      "nombre": "Error de replicación o sincronización entre servidores",
+      "categoria": "Operativa",
+      "recomendacion": "Revisar la réplica inconsistente, reforzar la sincronización y verificar integridad."
+    },
+    "F-22": {
+      "nombre": "Corrupción de la base de datos o falla de integridad",
+      "categoria": "Operativa",
+      "recomendacion": "Restaurar la base de datos desde el último respaldo íntegro y verificar el sistema de archivos."
+    },
+    "F-23": {
+      "nombre": "Fuerza bruta distribuida / credential stuffing",
+      "categoria": "Seguridad",
+      "recomendacion": "Activar bloqueo por IP, captcha/WAF y validar credenciales contra filtraciones."
+    },
+    "F-24": {
+      "nombre": "Fuerza bruta dirigida a una cuenta específica",
+      "categoria": "Seguridad",
+      "recomendacion": "Reforzar la política de contraseñas, habilitar MFA y monitorear la cuenta objetivo."
+    },
+    "F-25": {
+      "nombre": "Política de bloqueo automático mal configurada",
+      "categoria": "Operativa",
+      "recomendacion": "Ajustar los umbrales de la política de bloqueo y notificar a los usuarios."
+    },
+    "F-26": {
+      "nombre": "Compromiso de una cuenta privilegiada",
+      "categoria": "Seguridad",
+      "recomendacion": "Revocar sesiones y credenciales, analizar el alcance y rotar claves de administración."
+    },
+    "F-27": {
+      "nombre": "Uso indebido de credenciales (cuenta compartida o sesión robada)",
+      "categoria": "Seguridad",
+      "recomendacion": "Invalidar la sesión, verificar la identidad del usuario y desplegar MFA."
+    },
+    "F-28": {
+      "nombre": "Puerta trasera o escalada de privilegios",
+      "categoria": "Seguridad",
+      "recomendacion": "Eliminar cuentas o permisos no autorizados, rastrear su origen y revisar la gestión de identidades."
+    },
+    "F-29": {
+      "nombre": "Comportamiento legítimo no documentado (falsa alarma)",
+      "categoria": "Operativa",
+      "recomendacion": "Documentar el comportamiento como legítimo y ajustar reglas y umbrales de detección."
+    }
+  },
+  "rules": [
+    {
+      "id": "R-01",
+      "if_all": [
+        "q1_A",
+        "q2",
+        "q3_no",
+        "q4_no"
+      ],
+      "then": "F-01",
+      "diagnostico": "Falla eléctrica o de fuente de poder"
+    },
+    {
+      "id": "R-02",
+      "if_all": [
+        "q1_A",
+        "q2",
+        "q3_no",
+        "q4",
+        "q5_no"
+      ],
+      "then": "F-02",
+      "diagnostico": "Falla de hardware (disco o memoria dañados)"
+    },
+    {
+      "id": "R-03",
+      "if_all": [
+        "q1_A",
+        "q2",
+        "q3_no",
+        "q4",
+        "q5"
+      ],
+      "then": "F-03",
+      "diagnostico": "Caída del sistema operativo"
+    },
+    {
+      "id": "R-04",
+      "if_all": [
+        "q1_A",
+        "q2",
+        "q3",
+        "q6",
+        "q7"
+      ],
+      "then": "F-04",
+      "diagnostico": "Criptominero o malware que consume recursos"
+    },
+    {
+      "id": "R-05",
+      "if_all": [
+        "q1_A",
+        "q2",
+        "q3",
+        "q6",
+        "q7_no",
+        "q8"
+      ],
+      "then": "F-05",
+      "diagnostico": "Ataque de denegación de servicio (DoS/DDoS)"
+    },
+    {
+      "id": "R-06",
+      "if_all": [
+        "q1_A",
+        "q2",
+        "q3",
+        "q6",
+        "q7_no",
+        "q8_no"
+      ],
+      "then": "F-06",
+      "diagnostico": "Fuga de memoria o mala configuración de la aplicación"
+    },
+    {
+      "id": "R-07",
+      "if_all": [
+        "q1_A"
+      ],
+      "if_any": [
+        {
+          "if_all": [
+            "q2",
+            "q3",
+            "q6_no",
+            "q9"
+          ]
+        },
+        {
+          "if_all": [
+            "q2_no",
+            "q10",
+            "q11_no",
+            "q13_no",
+            "q14"
+          ]
+        }
+      ],
+      "then": "F-07",
+      "diagnostico": "Configuración incorrecta tras un cambio no controlado"
+    },
+    {
+      "id": "R-08",
+      "if_all": [
+        "q1_A",
+        "q2",
+        "q3",
+        "q6_no",
+        "q9_no"
+      ],
+      "then": "F-08",
+      "diagnostico": "Agotamiento del pool de conexiones de la base de datos"
+    },
+    {
+      "id": "R-09",
+      "if_all": [
+        "q1_A",
+        "q2_no",
+        "q10",
+        "q11",
+        "q12"
+      ],
+      "then": "F-09",
+      "diagnostico": "Punto de acceso rogue / ataque Evil Twin"
+    },
+    {
+      "id": "R-10",
+      "if_all": [
+        "q1_A",
+        "q2_no",
+        "q10",
+        "q11",
+        "q12_no"
+      ],
+      "then": "F-10",
+      "diagnostico": "Saturación o interferencia del canal Wi-Fi"
+    },
+    {
+      "id": "R-11",
+      "if_all": [
+        "q1_A",
+        "q2_no",
+        "q10",
+        "q11_no",
+        "q13"
+      ],
+      "then": "F-11",
+      "diagnostico": "Falla de hardware de red (switch, AP o puerto)"
+    },
+    {
+      "id": "R-12",
+      "if_all": [
+        "q1_A",
+        "q2_no",
+        "q10",
+        "q11_no",
+        "q13_no",
+        "q14_no"
+      ],
+      "then": "F-12",
+      "diagnostico": "Error de configuración de VLAN o DHCP"
+    },
+    {
+      "id": "R-13",
+      "if_all": [
+        "q1_A",
+        "q2_no",
+        "q10_no",
+        "q15"
+      ],
+      "then": "F-13",
+      "diagnostico": "Envenenamiento de DNS (spoofing/poisoning)"
+    },
+    {
+      "id": "R-14",
+      "if_all": [
+        "q1_A",
+        "q2_no",
+        "q10_no",
+        "q15_no",
+        "q16"
+      ],
+      "then": "F-14",
+      "diagnostico": "Ataque de intermediario (Man-in-the-Middle)"
+    },
+    {
+      "id": "R-15",
+      "if_all": [
+        "q1_A",
+        "q2_no",
+        "q10_no",
+        "q15_no",
+        "q16_no"
+      ],
+      "then": "F-15",
+      "diagnostico": "Caída del enlace o del proveedor de Internet"
+    },
+    {
+      "id": "R-16",
+      "if_all": [
+        "q1_B",
+        "q17",
+        "q18"
+      ],
+      "then": "F-16",
+      "diagnostico": "Ataque de ransomware"
+    },
+    {
+      "id": "R-17",
+      "if_all": [
+        "q1_B",
+        "q17",
+        "q18_no"
+      ],
+      "then": "F-17",
+      "diagnostico": "Malware de cifrado sin nota de rescate (wiper)"
+    },
+    {
+      "id": "R-18",
+      "if_all": [
+        "q1_B",
+        "q17_no",
+        "q19",
+        "q20"
+      ],
+      "then": "F-18",
+      "diagnostico": "Amenaza interna (insider) con uso indebido de privilegios"
+    },
+    {
+      "id": "R-19",
+      "if_all": [
+        "q1_B",
+        "q17_no",
+        "q19",
+        "q20_no"
+      ],
+      "then": "F-19",
+      "diagnostico": "Borrado remoto por atacante (acceso no autorizado)"
+    },
+    {
+      "id": "R-20",
+      "if_all": [
+        "q1_B",
+        "q17_no",
+        "q19_no",
+        "q21",
+        "q22"
+      ],
+      "then": "F-20",
+      "diagnostico": "Inyección SQL con manipulación de datos"
+    },
+    {
+      "id": "R-21",
+      "if_all": [
+        "q1_B",
+        "q17_no",
+        "q19_no",
+        "q21",
+        "q22_no",
+        "q23"
+      ],
+      "then": "F-21",
+      "diagnostico": "Error de replicación o sincronización entre servidores"
+    },
+    {
+      "id": "R-22",
+      "if_all": [
+        "q1_B",
+        "q17_no",
+        "q19_no"
+      ],
+      "if_any": [
+        "q21_no",
+        {
+          "if_all": [
+            "q22_no",
+            "q23_no"
+          ]
+        }
+      ],
+      "then": "F-22",
+      "diagnostico": "Corrupción de la base de datos o falla de integridad"
+    },
+    {
+      "id": "R-23",
+      "if_all": [
+        "q1_C",
+        "q24",
+        "q25"
+      ],
+      "then": "F-23",
+      "diagnostico": "Fuerza bruta distribuida / credential stuffing"
+    },
+    {
+      "id": "R-24",
+      "if_all": [
+        "q1_C",
+        "q24",
+        "q25_no",
+        "q26"
+      ],
+      "then": "F-24",
+      "diagnostico": "Fuerza bruta dirigida a una cuenta específica"
+    },
+    {
+      "id": "R-25",
+      "if_all": [
+        "q1_C",
+        "q24",
+        "q25_no",
+        "q26_no"
+      ],
+      "then": "F-25",
+      "diagnostico": "Política de bloqueo automático mal configurada"
+    },
+    {
+      "id": "R-26",
+      "if_all": [
+        "q1_C",
+        "q24_no",
+        "q27",
+        "q28"
+      ],
+      "then": "F-26",
+      "diagnostico": "Compromiso de una cuenta privilegiada"
+    },
+    {
+      "id": "R-27",
+      "if_all": [
+        "q1_C",
+        "q24_no",
+        "q27",
+        "q28_no"
+      ],
+      "then": "F-27",
+      "diagnostico": "Uso indebido de credenciales (cuenta compartida o sesión robada)"
+    },
+    {
+      "id": "R-28",
+      "if_all": [
+        "q1_C",
+        "q24_no",
+        "q27_no",
+        "q29"
+      ],
+      "then": "F-28",
+      "diagnostico": "Puerta trasera o escalada de privilegios"
+    },
+    {
+      "id": "R-29",
+      "if_all": [
+        "q1_C",
+        "q24_no",
+        "q27_no",
+        "q29_no"
+      ],
+      "then": "F-29",
+      "diagnostico": "Comportamiento legítimo no documentado (falsa alarma)"
+    }
+  ],
+  "post_rules": [
+    {
+      "id": "RA-01",
+      "if_any": [
+        "categoria=Seguridad"
+      ],
+      "then": "activar_protocolo('P-12 Escalamiento', 'P-13 Contención', 'P-14 Remediación')"
+    },
+    {
+      "id": "RA-02",
+      "if_any": [
+        "categoria=Operativa"
+      ],
+      "then": "derivar_a_soporte_tecnico()"
+    }
+  ],
+  "ajustes": [
+    "R-07: se completó cada rama del OR con las condiciones del camino del árbol (rama 1: q2, q3, q6_no, q9; rama 2: q2_no, q10, q11_no, q13_no, q14) para que la regla solo se cumpla en el camino correcto y sea exclusiva."
+  ]
+}
